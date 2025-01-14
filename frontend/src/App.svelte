@@ -5,18 +5,25 @@
   let searchQuery = '';
   let videos = [];
   let loading = false;
-  let hasSearched = false;
+  let HasSearched = false;
   let selectedVideo = null;
   let showModal = false;
 
   function reloadPage() {
     window.location.reload();
+    console.log('hasSearched:', HasSearched);
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
     loading = true;
-    hasSearched = true;
+    HasSearched = true;
+
+    // Add the 'visible-overflow' class and remove 'hidden-overflow'
+    document.documentElement.classList.add('visible-overflow');
+    document.documentElement.classList.remove('hidden-overflow');
+    document.body.classList.add('visible-overflow');
+    document.body.classList.remove('hidden-overflow');
 
     try {
       const result = await Search(searchQuery);
@@ -46,13 +53,19 @@
 
   onMount(() => {
     document.title = 'YouTube Zen';
+
+    // Set initial styles when the component is mounted
+    if (!HasSearched) {
+      document.documentElement.classList.add('hidden-overflow');
+      document.body.classList.add('hidden-overflow');
+    }
   });
 </script>
 
-<svelte:window on:keydown={handleKeydown}/>
+<svelte:window on:keydown={handleKeydown} />
 
 <div class="app">
-  <main class={!hasSearched ? 'centered' : ''}>
+  <main class={!HasSearched ? 'centered' : ''}>
     <h1 on:click={reloadPage} class="title">YouTube Zen</h1>
     <form on:submit={handleSubmit}>
       <div class="search-container">
@@ -87,38 +100,58 @@
           </div>
         {/each}
       </div>
-    {:else if hasSearched}
+    {:else if HasSearched}
       <p class="message">No videos found for "{searchQuery}".</p>
     {/if}
   </main>
 
   {#if showModal}
-    <div class="modal-overlay" on:click={closeModal}>
-      <div class="modal-content" on:click|stopPropagation>
-        <button class="close-button" on:click={closeModal}>×</button>
-        <iframe
-          title={selectedVideo.title}
-          width="100%"
-          height="100%"
-          src={`https://www.youtube.com/embed/${selectedVideo.id}`}
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
-      </div>
+  <div class="modal-overlay" on:click={closeModal}>
+    <div class="modal-content" on:click|stopPropagation>
+      <button class="close-button" on:click={closeModal}>×</button>
+      <iframe
+        title={selectedVideo.title}
+        src={`https://www.youtube.com/embed/${selectedVideo.id}`}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
     </div>
-  {/if}
+  </div>
+{/if}
+
 </div>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-  :global(html, body) {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: #ffffff;
-  }
+  :global(html.hidden-overflow) {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+:global(body.hidden-overflow) {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+:global(html.visible-overflow) {
+  margin: 0;
+  height: 100%;
+  overflow: auto; /* Or visible, based on your preference */
+  background-color: #ffffff;
+}
+
+:global(body.visible-overflow) {
+  margin: 0;
+  height: 100%;
+  overflow: auto; /* Or visible, based on your preference */
+  background-color: #ffffff;
+}
+
 
   .app {
     font-family: 'Poppins', sans-serif;
@@ -274,37 +307,44 @@
 
   .modal-content {
     position: relative;
-    width: 90%;
-    max-width: 800px;
-    height: 0;
-    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    width: 90%; /* Make it responsive */
+    max-width: 1200px; /* Prevent over-expansion */
+    aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
     background: #fff;
     border-radius: 8px;
+    overflow: hidden; /* Clip content */
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 
   .close-button {
     position: absolute;
-    top: -40px;
-    right: -40px;
-    width: 30px;
-    height: 30px;
-    background: #fff;
+    top: 100px;
+    right: 25px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
     border-radius: 50%;
+    color: #333;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    color: #333;
     cursor: pointer;
     z-index: 1001;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-  iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
+  /* Handle fullscreen sizes */
+  @media (min-width: 1280px) {
+    .modal-content {
+      width: 80%; /* Larger width for fullscreen */
+      max-width: 1500px;
+    }
   }
 </style>

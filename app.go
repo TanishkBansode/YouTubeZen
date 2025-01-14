@@ -26,7 +26,7 @@ func (a *App) startup(ctx context.Context) {
 	backend.Backend()
 }
 
-// SearchYoutube calls the SearchYoutube function from the backend package
+// Search calls the SearchYoutube function from the backend package
 func (a *App) Search(query string) ([]map[string]string, error) {
 	err := godotenv.Load()
 	if err != nil {
@@ -42,8 +42,3 @@ func (a *App) Search(query string) ([]map[string]string, error) {
 	results := backend.SearchYouTube(apiKey, query)
 	return results, nil
 }
-
-// // Greet returns a greeting for the given name
-// func (a *App) Greet(name string) string {
-// 	return fmt.Sprintf("Hello %s, It's show time!", name)
-// }

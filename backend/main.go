@@ -4,12 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
@@ -28,11 +26,6 @@ func Backend() {
 		log.Fatal("YouTube API key not found in environment")
 	}
 
-	router := gin.Default()
-
-	router.GET("/embed/:id", embedVideo)
-
-	router.Run(":8080")
 }
 
 // Search YouTube using the API key and return video details
@@ -96,11 +89,4 @@ func formatDuration(duration string) string {
 		return fmt.Sprintf("%d:%02d:%02d", hours, minutes, seconds)
 	}
 	return fmt.Sprintf("%d:%02d", minutes, seconds)
-}
-
-// Embed the selected video
-func embedVideo(c *gin.Context) {
-	videoID := c.Param("id")
-	embedURL := fmt.Sprintf("https://www.youtube.com/embed/%s", videoID)
-	c.HTML(http.StatusOK, "embed.html", gin.H{"EmbedURL": embedURL, "VideoID": videoID})
 }
