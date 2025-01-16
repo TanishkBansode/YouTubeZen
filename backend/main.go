@@ -37,44 +37,78 @@ func SearchYouTube(apiKey, query string) []map[string]string {
 		return nil
 	}
 
-	// Search for the top 10 videos based on the query
-	searchCall := service.Search.List([]string{"id", "snippet"}).Q(query).MaxResults(10).Type("video")
-	searchResponse, err := searchCall.Do()
-	if err != nil {
-		fmt.Println("Error searching YouTube:", err)
-		return nil
-	}
-
-	// Collect video IDs for content details request
-	var videoIDs []string
-	for _, item := range searchResponse.Items {
-		videoIDs = append(videoIDs, item.Id.VideoId)
-	}
-
-	// Fetch additional details (like duration) using the video IDs...
-	detailsCall := service.Videos.List([]string{"snippet", "contentDetails"}).Id(strings.Join(videoIDs, ","))
-	detailsResponse, err := detailsCall.Do()
-	if err != nil {
-		fmt.Println("Error fetching video details:", err)
-		return nil
-	}
-
-	videos := make([]map[string]string, 0, len(detailsResponse.Items))
-	for _, item := range detailsResponse.Items {
-		video := map[string]string{
-			"id":       item.Id,
-			"title":    item.Snippet.Title,
-			"channel":  item.Snippet.ChannelTitle,
-			"duration": formatDuration(item.ContentDetails.Duration),
+	// Handle query, check if it's a URL or a search query
+	query, errorcode := HandleQuery(query)
+	switch errorcode {
+	case 2:
+		// Search for the top 10 videos based on the query
+		searchCall := service.Search.List([]string{"id", "snippet"}).Q(query).MaxResults(10).Type("video")
+		searchResponse, err := searchCall.Do()
+		if err != nil {
+			fmt.Println("Error searching YouTube:", err)
+			return nil
 		}
-		videos = append(videos, video)
-	}
 
-	if len(videos) == 0 {
+		// Collect video IDs for content details request
+		var videoIDs []string
+		for _, item := range searchResponse.Items {
+			videoIDs = append(videoIDs, item.Id.VideoId)
+		}
+
+		// Fetch additional details (like duration) using the video IDs...
+		detailsCall := service.Videos.List([]string{"snippet", "contentDetails"}).Id(strings.Join(videoIDs, ","))
+		detailsResponse, err := detailsCall.Do()
+		if err != nil {
+			fmt.Println("Error fetching video details:", err)
+			return nil
+		}
+
+		videos := make([]map[string]string, 0, len(detailsResponse.Items))
+		for _, item := range detailsResponse.Items {
+			video := map[string]string{
+				"id":       item.Id,
+				"title":    item.Snippet.Title,
+				"channel":  item.Snippet.ChannelTitle,
+				"duration": formatDuration(item.ContentDetails.Duration),
+			}
+			videos = append(videos, video)
+		}
+
+		if len(videos) == 0 {
+			return nil
+		}
+
+		return videos
+	case 0:
+		var videoIDs []string
+		videoIDs = append(videoIDs, query)
+		detailsCall := service.Videos.List([]string{"snippet", "contentDetails"}).Id(strings.Join(videoIDs, ","))
+		detailsResponse, err := detailsCall.Do()
+		if err != nil {
+			fmt.Println("Error fetching video details:", err)
+			return nil
+		}
+
+		videos := make([]map[string]string, 0, len(detailsResponse.Items))
+		for _, item := range detailsResponse.Items {
+			video := map[string]string{
+				"id":       item.Id,
+				"title":    item.Snippet.Title,
+				"channel":  item.Snippet.ChannelTitle,
+				"duration": formatDuration(item.ContentDetails.Duration),
+			}
+			videos = append(videos, video)
+		}
+
+		if len(videos) == 0 {
+			return nil
+		}
+
+		return videos
+	case 1: // Invalid URL
 		return nil
 	}
-
-	return videos
+	return nil
 }
 
 // Format ISO 8601 duration to H:MM:SS or MM:SS
