@@ -152,7 +152,6 @@
   background-color: #ffffff;
 }
 
-
   .app {
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
@@ -345,6 +344,77 @@
     .modal-content {
       width: 80%; /* Larger width for fullscreen */
       max-width: 1500px;
+    }
+  }
+
+  /* Dark mode styles */
+  @media (prefers-color-scheme: dark) {
+    :global(html.hidden-overflow),
+    :global(body.hidden-overflow),
+    :global(html.visible-overflow),
+    :global(body.visible-overflow) {
+      background-color: #121212;
+    }
+
+    .app {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    .title {
+      color: #e0e0e0;
+    }
+
+    .title:hover {
+      color: #90caf9;
+    }
+
+    input {
+      background: #333;
+      color: #e0e0e0;
+      border-color: #444;
+    }
+
+    input:focus {
+      border-color: #90caf9;
+    }
+
+    button svg {
+      color: #e0e0e0;
+    }
+
+    .video-item {
+      background: #1e1e1e;
+    }
+
+    .video-info h2 {
+      color: #e0e0e0;
+    }
+
+    .video-info p {
+      color: #b0b0b0;
+    }
+
+    .watch-button {
+      background: #333;
+      color: #90caf9;
+    }
+
+    .watch-button:hover {
+      background: #444;
+    }
+
+    .message {
+      color: #b0b0b0;
+    }
+
+    .modal-content {
+      background: #1e1e1e;
+    }
+
+    .close-button {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e0e0e0;
     }
   }
 </style>
