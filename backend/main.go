@@ -3,30 +3,11 @@ package backend
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
 	"strings"
 	"time"
-
-	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
-
-func Backend() {
-	// Load environment variables from .env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	// Get API key from environment variables
-	apiKey := os.Getenv("YOUTUBE_API_KEY")
-	if apiKey == "" {
-		log.Fatal("YouTube API key not found in environment")
-	}
-
-}
 
 // Search YouTube using the API key and return video details
 func SearchYouTube(apiKey, query string) []map[string]string {
