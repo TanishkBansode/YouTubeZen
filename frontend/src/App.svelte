@@ -8,10 +8,15 @@
   let HasSearched = false;
   let selectedVideo = null;
   let showModal = false;
+  let showSettings = false;  // New state for settings
 
   function reloadPage() {
     window.location.reload();
     console.log('hasSearched:', HasSearched);
+  }
+
+  function toggleSettings() {  // New function for settings
+    showSettings = !showSettings;
   }
 
   async function handleSubmit(event) {
@@ -46,8 +51,12 @@
   }
 
   function handleKeydown(event) {
-    if (event.key === 'Escape' && showModal) {
-      closeModal();
+    if (event.key === 'Escape') {
+      if (showSettings) {
+        showSettings = false;
+      } else if (showModal) {
+        closeModal();
+      }
     }
   }
 
@@ -65,6 +74,13 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <div class="app">
+  <button class="settings-button" on:click={toggleSettings} aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+
   <main class={!HasSearched ? 'centered' : ''}>
     <h1 on:click={reloadPage} class="title">YouTube Zen</h1>
     <form on:submit={handleSubmit}>
@@ -106,51 +122,62 @@
   </main>
 
   {#if showModal}
-  <div class="modal-overlay" on:click={closeModal}>
-    <div class="modal-content" on:click|stopPropagation>
-      <button class="close-button" on:click={closeModal}>×</button>
-      <iframe
-        title={selectedVideo.title}
-        src={`https://www.youtube.com/embed/${selectedVideo.id}`}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-      ></iframe>
+    <div class="modal-overlay" on:click={closeModal}>
+      <div class="modal-content" on:click|stopPropagation>
+        <button class="close-button" on:click={closeModal}>×</button>
+        <iframe
+          title={selectedVideo.title}
+          src={`https://www.youtube.com/embed/${selectedVideo.id}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
-  </div>
-{/if}
+  {/if}
 
+  {#if showSettings}
+    <div class="modal-overlay" on:click={toggleSettings}>
+      <div class="settings-modal" on:click|stopPropagation>
+        <button class="close-button" on:click={toggleSettings}>×</button>
+        <h2>Settings</h2>
+        <div class="settings-content">
+          <p>Settings panel content will go here.</p>
+        </div>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
   :global(html.hidden-overflow) {
-  margin: 0;
-  height: 100%;
-  overflow: hidden;
-  background-color: #ffffff;
-}
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #ffffff;
+  }
 
-:global(body.hidden-overflow) {
-  margin: 0;
-  height: 100%;
-  overflow: hidden;
-  background-color: #ffffff;
-}
+  :global(body.hidden-overflow) {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #ffffff;
+  }
 
-:global(html.visible-overflow) {
-  margin: 0;
-  height: 100%;
-  overflow: auto; /* Or visible, based on your preference */
-  background-color: #ffffff;
-}
+  :global(html.visible-overflow) {
+    margin: 0;
+    height: 100%;
+    overflow: auto;
+    background-color: #ffffff;
+  }
 
-:global(body.visible-overflow) {
-  margin: 0;
-  height: 100%;
-  overflow: auto; /* Or visible, based on your preference */
-  background-color: #ffffff;
-}
+  :global(body.visible-overflow) {
+    margin: 0;
+    height: 100%;
+    overflow: auto;
+    background-color: #ffffff;
+  }
 
   .app {
     font-family: 'Poppins', sans-serif;
@@ -169,12 +196,10 @@
     min-height: 100vh;
   }
 
-  /* New styles for centered initial state */
   .centered {
     margin-top: 10rem;
   }
 
-  /* Modified title styles */
   .title {
     font-size: 2.5rem;
     font-weight: 700;
@@ -304,14 +329,14 @@
     z-index: 1000;
   }
 
-  .modal-content {
+  .modal-content {  
     position: relative;
-    width: 90%; /* Make it responsive */
-    max-width: 1200px; /* Prevent over-expansion */
-    aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
-    background: #fff;
+    width: 90%;
+    max-width: 1200px;
+    aspect-ratio: 16 / 9;
+    background: none;
     border-radius: 8px;
-    overflow: hidden; /* Clip content */
+    overflow: visible;
   }
 
   iframe {
@@ -322,8 +347,8 @@
 
   .close-button {
     position: absolute;
-    top: 100px;
-    right: 25px;
+    top: -20px;
+    right: -30px;
     width: 40px;
     height: 40px;
     background: rgba(255, 255, 255, 0.9);
@@ -339,10 +364,52 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-  /* Handle fullscreen sizes */
+  /* New styles for settings */
+  .settings-button {
+    position: fixed;
+    top: 2rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 100;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+
+  .settings-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .settings-button svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #666;
+  }
+
+  .settings-modal {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+  }
+
+  .settings-modal h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .settings-content {
+    margin-top: 1rem;
+  }
+
   @media (min-width: 1280px) {
     .modal-content {
-      width: 80%; /* Larger width for fullscreen */
+      width: 80%;
       max-width: 1500px;
     }
   }
@@ -409,7 +476,7 @@
     }
 
     .modal-content {
-      background: #1e1e1e;
+      background: none;
     }
 
     .close-button {
