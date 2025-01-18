@@ -2,6 +2,7 @@
 
 It is a minimalist desktop app to view YouTube videos without the recommendations, comments, or promotions. Just a pure video-viewing experience.
 
+[![Watch the video](https://img.youtube.com/vi/2xioDUufMu0/0.jpg)](https://www.youtube.com/watch?v=2xioDUufMu0)
 ## Why?
 - It is not an extension, so you can't disable it and accidentally see things you weren't intending to.
 - It is not a website, so you can't just switch tabs instantly for something else.
