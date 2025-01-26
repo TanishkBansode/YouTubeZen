@@ -16,11 +16,7 @@ It is a minimalist desktop app to view YouTube videos without the recommendation
 
 ## How to Use?
 Download the latest executable for your operating system from the [Releases](https://github.com/your-repo/releases) section. 
-Create a `.env` file in the same directory as the executable and put your YouTube API Key:
-
-```
-YOUTUBE_API_KEY=API_KEY
-```
+Add `client_secret.json` file in the same directory as the executable, get it from the google cloud console, and then after running, it'll get you to the login page.
 
 
 ## Live Development
