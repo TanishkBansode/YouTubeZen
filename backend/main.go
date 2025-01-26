@@ -3,24 +3,53 @@ package backend
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
+
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
-// Search YouTube using the API key and return video details
-func SearchYouTube(apiKey, query string) []map[string]string {
+func Initialize(client *http.Client) *youtube.Service {
 	ctx := context.Background()
-	service, err := youtube.NewService(ctx, option.WithAPIKey(apiKey))
+	service, err := youtube.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		fmt.Println("Error initializing YouTube service:", err)
 		return nil
 	}
+	return service
+}
+
+func GetSubscriptions(service *youtube.Service) []map[string]string {
+	subscriptions := make([]map[string]string, 0)
+
+	subscriptionsCall := service.Subscriptions.List([]string{"snippet"}).Mine(true).MaxResults(50)
+	subscriptionsResponse, err := subscriptionsCall.Do()
+	if err != nil {
+		fmt.Println("Error fetching subscriptions:", err)
+		return nil
+	}
+
+	for _, item := range subscriptionsResponse.Items {
+		subscription := map[string]string{
+			"id":      item.Id,
+			"title":   item.Snippet.Title,
+			"channel": item.Snippet.ChannelId,
+		}
+		subscriptions = append(subscriptions, subscription)
+	}
+
+	return subscriptions
+}
+
+// Search YouTube using the API key and return video details
+func SearchYouTube(service *youtube.Service, query string) []map[string]string {
 
 	// Handle query, check if it's a URL or a search query
 	query, errorcode := HandleQuery(query)
 	switch errorcode {
+	// If int is 2, the query is not a valid URL.
 	case 2:
 		// Search for the top 10 videos based on the query
 		searchCall := service.Search.List([]string{"id", "snippet"}).Q(query).MaxResults(10).Type("video")
@@ -60,6 +89,7 @@ func SearchYouTube(apiKey, query string) []map[string]string {
 		}
 
 		return videos
+	// If int is 0, the query is a valid URL and the video ID was extracted.
 	case 0:
 		var videoIDs []string
 		videoIDs = append(videoIDs, query)

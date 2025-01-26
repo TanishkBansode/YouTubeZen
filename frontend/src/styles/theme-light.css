@@ -1,0 +1,29 @@
+@media (prefers-color-scheme: light){
+
+  body.hidden-overflow {
+    overflow: hidden;
+    background-color: #feeee0;
+    }
+  
+  body.visible-overflow {
+    overflow: auto;
+    background-color: #feeee0;
+    }
+
+  :root {
+
+    --global-color: #feeee0;
+    --secondary-text-color: #666;
+    --watch-button-color: #3b82f6;
+    --watch-button-background: #e6f0ff;
+    --video-item-background: #f1e2d5;
+    --input-background: #fff;
+    --item-hover: #d62f0d;
+    --watch-button-hover: #d62f0d;
+    --video-info-h2-color: #1a1a1a;
+    --button-svg: #606770;
+    --title-color: #000;
+  }
+}
+
+

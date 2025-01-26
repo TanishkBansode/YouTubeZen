@@ -1,0 +1,246 @@
+/* Base styles - styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@font-face {
+  font-family: 'Chicago';
+  src: url('../assets/fonts/Chicago.woff') format('woff');
+}
+
+
+.title {
+  color: var(--title-color);
+
+  cursor: pointer;
+  font-size: 2.7rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  transition: color 0.3s ease;
+}
+
+.title:hover {
+  color: var(--item-hover);
+}
+
+input {
+  background: var(--input-background);
+  color: var(--title-color);
+
+  font-size: 1rem;
+  border: 1px solid #e0e0e0;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 1rem 3rem 1rem 1.5rem;
+  border: 2px solid var(--border-color);
+  border-radius: 9999px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+button svg {
+  color: var(--button-svg);
+
+  height: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+button:hover svg {
+  color: var(--item-hover);
+}
+
+.video-item {
+  background: var(--video-item-background);
+
+  font-family: 'Poppins', sans-serif;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+
+.video-info h2 {
+  color: var(--video-info-h2-color);
+
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.video-info p {
+  color: var(--secondary-text-color);
+
+  font-family: 'Chicago', sans-serif;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+
+
+.watch-button {
+  background: var(--watch-button-background);
+  color: var(--watch-button-color);
+
+  position: static;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.message {
+  color: var(--secondary-text-color);
+
+  margin-top: 1rem;
+  text-align: center;
+}
+
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+
+.app {
+  font-family: 'Chicago', 'Courier New', Courier, monospace;
+}
+
+.centered {
+  margin-top: 10rem;
+}
+
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 2rem;
+}
+
+
+button {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.video-item:hover {
+  transform: translateY(-2px);
+}
+
+.settings-button {
+  position: fixed;
+  top: 2rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 100;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+
+.settings-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.settings-button svg {
+  color: #666;
+}
+
+.settings-modal {
+  color: black;
+  background: #fff;
+  position: absolute;
+  width: 90%;                           
+  max-width: 500px;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.settings-modal h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 00;
+}
+
+.settings-content {
+  margin-top: 1rem;
+}
+
+
+.close-button {
+  color: #333;
+
+  top: -20px;
+  right: -30px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+}
+
+
+.results {
+  max-width: 600px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--modal-overlay);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  background: rgba(59, 40, 40, 0.75);
+
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  aspect-ratio: 16 / 9;
+  background: none;
+  border-radius: 8px;
+  overflow: visible;
+}
+
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+
+/* Responsive Design */
+@media (min-width: 1280px) {
+  .modal-content {
+    width: 80%;
+    max-width: 1500px;
+  }
+}

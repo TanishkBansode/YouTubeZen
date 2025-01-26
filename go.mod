@@ -5,8 +5,9 @@ go 1.22
 toolchain go1.23.4
 
 require (
-	github.com/joho/godotenv v1.5.1
 	github.com/wailsapp/wails/v2 v2.9.2
+	golang.org/x/net v0.33.0
+	golang.org/x/oauth2 v0.25.0
 	google.golang.org/api v0.216.0
 )
 
@@ -48,8 +49,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.31.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
-	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/oauth2 v0.25.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250102185135-69823020774d // indirect

@@ -3,11 +3,13 @@ package main
 import (
 	"YouTubeZen/backend"
 	"context"
-	"log"
-	"os"
+	"net/http"
 
-	"github.com/joho/godotenv"
+	"google.golang.org/api/youtube/v3"
 )
+
+var client *http.Client
+var service *youtube.Service
 
 // App struct
 type App struct {
@@ -23,22 +25,13 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	backend.Backend()
+	scope := youtube.YoutubeReadonlyScope
+	client = backend.GetClient(scope)
+	service = backend.Initialize(client)
 }
 
 // Search calls the SearchYoutube function from the backend package
 func (a *App) Search(query string) ([]map[string]string, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	// Get API key from environment variables
-	apiKey := os.Getenv("YOUTUBE_API_KEY")
-	if apiKey == "" {
-		log.Fatal("YouTube API key not found in environment")
-	}
-
-	results := backend.SearchYouTube(apiKey, query)
+	results := backend.SearchYouTube(service, query)
 	return results, nil
 }
