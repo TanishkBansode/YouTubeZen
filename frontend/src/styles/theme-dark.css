@@ -1,14 +1,14 @@
-@media (prefers-color-scheme: dark){
+@media (prefers-color-scheme: dark) {
   body.hidden-overflow {
     overflow: hidden;
     background-color: #121212;
-  } 
+  }
 
   body.visible-overflow {
     overflow: auto;
     background-color: #121212;
   }
-  
+
   :root {
     --global-body-color: #121212;
     --secondary-text-color: #b0b0b0;
@@ -16,11 +16,12 @@
     --watch-button-background: #333;
     --video-item-background: #1e1e1e;
     --input-background: #333;
+    --border-color: #444;
     --item-hover: #121212;
     --watch-button-hover: #444;
     --video-info-h2-color: #e0e0e0;
     --button-svg: #606770;
     --title-color: #e0e0e0;
   }
-  
+
 }

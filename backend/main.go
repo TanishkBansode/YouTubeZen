@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"regexp"
+	"strconv"
 	"strings"
-	"time"
 
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
@@ -43,6 +44,29 @@ func GetSubscriptions(service *youtube.Service) []map[string]string {
 	return subscriptions
 }
 
+// fetchVideoDetails is a helper function to fetch video details by IDs and avoid code duplication
+func fetchVideoDetails(service *youtube.Service, videoIDs []string) []map[string]string {
+	detailsCall := service.Videos.List([]string{"snippet", "contentDetails"}).Id(strings.Join(videoIDs, ","))
+	detailsResponse, err := detailsCall.Do()
+	if err != nil {
+		fmt.Println("Error fetching video details:", err)
+		return nil
+	}
+
+	videos := make([]map[string]string, 0, len(detailsResponse.Items))
+	for _, item := range detailsResponse.Items {
+		video := map[string]string{
+			"id":       item.Id,
+			"title":    item.Snippet.Title,
+			"channel":  item.Snippet.ChannelTitle,
+			"duration": formatDuration(item.ContentDetails.Duration),
+		}
+		videos = append(videos, video)
+	}
+
+	return videos
+}
+
 // Search YouTube using the API key and return video details
 func SearchYouTube(service *youtube.Service, query string) []map[string]string {
 
@@ -65,25 +89,8 @@ func SearchYouTube(service *youtube.Service, query string) []map[string]string {
 			videoIDs = append(videoIDs, item.Id.VideoId)
 		}
 
-		// Fetch additional details (like duration) using the video IDs...
-		detailsCall := service.Videos.List([]string{"snippet", "contentDetails"}).Id(strings.Join(videoIDs, ","))
-		detailsResponse, err := detailsCall.Do()
-		if err != nil {
-			fmt.Println("Error fetching video details:", err)
-			return nil
-		}
-
-		videos := make([]map[string]string, 0, len(detailsResponse.Items))
-		for _, item := range detailsResponse.Items {
-			video := map[string]string{
-				"id":       item.Id,
-				"title":    item.Snippet.Title,
-				"channel":  item.Snippet.ChannelTitle,
-				"duration": formatDuration(item.ContentDetails.Duration),
-			}
-			videos = append(videos, video)
-		}
-
+		// Fetch additional details (like duration) using the video IDs
+		videos := fetchVideoDetails(service, videoIDs)
 		if len(videos) == 0 {
 			return nil
 		}
@@ -91,26 +98,8 @@ func SearchYouTube(service *youtube.Service, query string) []map[string]string {
 		return videos
 	// If int is 0, the query is a valid URL and the video ID was extracted.
 	case 0:
-		var videoIDs []string
-		videoIDs = append(videoIDs, query)
-		detailsCall := service.Videos.List([]string{"snippet", "contentDetails"}).Id(strings.Join(videoIDs, ","))
-		detailsResponse, err := detailsCall.Do()
-		if err != nil {
-			fmt.Println("Error fetching video details:", err)
-			return nil
-		}
-
-		videos := make([]map[string]string, 0, len(detailsResponse.Items))
-		for _, item := range detailsResponse.Items {
-			video := map[string]string{
-				"id":       item.Id,
-				"title":    item.Snippet.Title,
-				"channel":  item.Snippet.ChannelTitle,
-				"duration": formatDuration(item.ContentDetails.Duration),
-			}
-			videos = append(videos, video)
-		}
-
+		videoIDs := []string{query}
+		videos := fetchVideoDetails(service, videoIDs)
 		if len(videos) == 0 {
 			return nil
 		}
@@ -122,14 +111,31 @@ func SearchYouTube(service *youtube.Service, query string) []map[string]string {
 	return nil
 }
 
-// Format ISO 8601 duration to H:MM:SS or MM:SS
+// formatDuration converts ISO 8601 duration format (from YouTube API) to H:MM:SS or MM:SS format
+// Examples: PT1H2M3S -> 1:02:03, PT15M30S -> 15:30, PT45S -> 0:45
 func formatDuration(duration string) string {
-	d, _ := time.ParseDuration(strings.ReplaceAll(strings.ToLower(duration), "pt", ""))
+	// YouTube uses ISO 8601 duration format: PT#H#M#S
+	// Remove the PT prefix
+	duration = strings.TrimPrefix(duration, "PT")
 
-	hours := int(d.Hours())
-	minutes := int(d.Minutes()) % 60
-	seconds := int(d.Seconds()) % 60
+	var hours, minutes, seconds int
 
+	// Use regex to extract hours, minutes, and seconds
+	hoursRegex := regexp.MustCompile(`(\d+)H`)
+	minutesRegex := regexp.MustCompile(`(\d+)M`)
+	secondsRegex := regexp.MustCompile(`(\d+)S`)
+
+	if matches := hoursRegex.FindStringSubmatch(duration); len(matches) > 1 {
+		hours, _ = strconv.Atoi(matches[1])
+	}
+	if matches := minutesRegex.FindStringSubmatch(duration); len(matches) > 1 {
+		minutes, _ = strconv.Atoi(matches[1])
+	}
+	if matches := secondsRegex.FindStringSubmatch(duration); len(matches) > 1 {
+		seconds, _ = strconv.Atoi(matches[1])
+	}
+
+	// Format output based on presence of hours
 	if hours > 0 {
 		return fmt.Sprintf("%d:%02d:%02d", hours, minutes, seconds)
 	}

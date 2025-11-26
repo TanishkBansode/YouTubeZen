@@ -9,5 +9,8 @@
   "author": {
     "name": "TanishkBansode",
     "email": "bansodetanishk@gmail.com"
+  },
+  "linux": {
+    "webviewGtkVersion": "4.1"
   }
 }

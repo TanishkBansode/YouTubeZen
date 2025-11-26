@@ -23,16 +23,13 @@
 input {
   background: var(--input-background);
   color: var(--title-color);
-
   font-size: 1rem;
-  border: 1px solid #e0e0e0;
   transition: border-color 0.3s ease;
   width: 100%;
   padding: 1rem 3rem 1rem 1.5rem;
   border: 2px solid var(--border-color);
   border-radius: 9999px;
   outline: none;
-  transition: border-color 0.3s ease;
 }
 
 button svg {
@@ -174,7 +171,7 @@ button {
 .settings-modal h2 {
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
-  font-weight: 00;
+  font-weight: 600;
 }
 
 .settings-content {

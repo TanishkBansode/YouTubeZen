@@ -59,7 +59,7 @@ func GetClient(scope string) *http.Client {
 
 	b, err := os.ReadFile("client_secret.json")
 	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
+		log.Fatalf("Unable to read client secret file: %v\n\nPlease ensure client_secret.json is in the same directory as the executable.\nYou can obtain this file from the Google Cloud Console at https://console.cloud.google.com/apis/credentials", err)
 	}
 
 	// If modifying the scope, delete your previously saved credentials
@@ -126,7 +126,7 @@ func openURL(url string) error {
 	case "linux":
 		err = exec.Command("xdg-open", url).Start()
 	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", "http://localhost:4001/").Start()
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 	case "darwin":
 		err = exec.Command("open", url).Start()
 	default:
@@ -201,9 +201,14 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if closeErr := f.Close(); closeErr != nil {
+			fmt.Printf("Error closing token file: %v\n", closeErr)
+		}
+	}()
+	
 	t := &oauth2.Token{}
 	err = json.NewDecoder(f).Decode(t)
-	defer f.Close()
 	return t, err
 }
 
