@@ -1,17 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Search } from "../wailsjs/go/main/App.js";
+  import { searchYouTube, type Video } from "./lib/youtube";
   import "./styles/styles.css";
   import "./styles/theme-light.css";
   import "./styles/theme-dark.css";
-
-  // TypeScript interface for Video data
-  interface Video {
-    id: string;
-    title: string;
-    channel: string;
-    duration: string;
-  }
 
   let searchQuery = "";
   let videos: Video[] = [];
@@ -45,7 +37,7 @@
     document.body.classList.remove("hidden-overflow");
 
     try {
-      const result = await Search(searchQuery);
+      const result = await searchYouTube(searchQuery);
       if (result && result.length > 0) {
         videos = result as unknown as Video[];
       } else {
@@ -213,7 +205,7 @@
         <iframe
           id="video-title"
           title={selectedVideo.title}
-          src={`http://localhost:8888/youtube-embed?v=${selectedVideo.id}`}
+          src={`https://www.youtube-nocookie.com/embed/${selectedVideo.id}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
           loading="lazy"

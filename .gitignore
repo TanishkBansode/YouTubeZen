@@ -2,10 +2,6 @@ build/bin
 node_modules
 frontend/dist
 
-# OAuth Secrets - DO NOT COMMIT
-client_secret.json
-.credentials/
-
 # Development
 .env
 .env.local
