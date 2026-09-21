@@ -6,7 +6,7 @@ A minimalist, installable web app to watch YouTube videos without recommendation
 - Not an extension, so you can't accidentally disable it
 - Not a native app with feeds, so there's nothing to doomscroll
 - Treats Shorts links like normal videos
-
+- Demo at: https://tanishkbansode.github.io/YouTubeZen/
 ## How it works
 
 Everything runs in your browser:
